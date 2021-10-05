@@ -1,0 +1,10 @@
+C:\Users\ferch\Documents\Universidad\Inofrmatica I\Lab 1\Gerstor_De Particiones_De_Memoria\Gerstor_De Particiones_De_Memoria\bin\Debug\Gerstor_De Particiones_De_Memoria.exe.config
+C:\Users\ferch\Documents\Universidad\Inofrmatica I\Lab 1\Gerstor_De Particiones_De_Memoria\Gerstor_De Particiones_De_Memoria\bin\Debug\Gerstor_De Particiones_De_Memoria.exe
+C:\Users\ferch\Documents\Universidad\Inofrmatica I\Lab 1\Gerstor_De Particiones_De_Memoria\Gerstor_De Particiones_De_Memoria\bin\Debug\Gerstor_De Particiones_De_Memoria.pdb
+C:\Users\ferch\Documents\Universidad\Inofrmatica I\Lab 1\Gerstor_De Particiones_De_Memoria\Gerstor_De Particiones_De_Memoria\obj\Debug\Gerstor_De Particiones_De_Memoria.csproj.AssemblyReference.cache
+C:\Users\ferch\Documents\Universidad\Inofrmatica I\Lab 1\Gerstor_De Particiones_De_Memoria\Gerstor_De Particiones_De_Memoria\obj\Debug\Gerstor_De_Particiones_De_Memoria.Form1.resources
+C:\Users\ferch\Documents\Universidad\Inofrmatica I\Lab 1\Gerstor_De Particiones_De_Memoria\Gerstor_De Particiones_De_Memoria\obj\Debug\Gerstor_De_Particiones_De_Memoria.Properties.Resources.resources
+C:\Users\ferch\Documents\Universidad\Inofrmatica I\Lab 1\Gerstor_De Particiones_De_Memoria\Gerstor_De Particiones_De_Memoria\obj\Debug\Gerstor_De Particiones_De_Memoria.csproj.GenerateResource.cache
+C:\Users\ferch\Documents\Universidad\Inofrmatica I\Lab 1\Gerstor_De Particiones_De_Memoria\Gerstor_De Particiones_De_Memoria\obj\Debug\Gerstor_De Particiones_De_Memoria.csproj.CoreCompileInputs.cache
+C:\Users\ferch\Documents\Universidad\Inofrmatica I\Lab 1\Gerstor_De Particiones_De_Memoria\Gerstor_De Particiones_De_Memoria\obj\Debug\Gerstor_De Particiones_De_Memoria.exe
+C:\Users\ferch\Documents\Universidad\Inofrmatica I\Lab 1\Gerstor_De Particiones_De_Memoria\Gerstor_De Particiones_De_Memoria\obj\Debug\Gerstor_De Particiones_De_Memoria.pdb
