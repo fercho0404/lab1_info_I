@@ -10,7 +10,7 @@ namespace Gerstor_De_Particiones_De_Memoria.Models
 {
     public class MemorySpace
     {
-        public int TotalMemory { get; set; }
-        public int UsedMemory { get; set; }
+        public string ProcessName { get; set; }
+        public bool UsedSpace { get; set; }
     }
 }
