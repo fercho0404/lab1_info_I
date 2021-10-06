@@ -12,5 +12,6 @@ namespace Gerstor_De_Particiones_De_Memoria.Models
     {
         public string ProcessName { get; set; }
         public bool UsedSpace { get; set; }
+        public int TotalSpace { get; set; }
     }
 }

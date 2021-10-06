@@ -18,6 +18,7 @@ namespace Gerstor_De_Particiones_De_Memoria
     {
         int memoryTotalSpace = 16384;
         int memoryOS = 2048;
+        int indexPartitionType = 0;
         String[] itemsProcessPending = { "Calculadora (128KB)", "Chrome (8192KB)", "Explorador (512KB)", "NotePad (2048KB)", "Paint (512KB)", "PowerPoint (2048KB)", "Recortes (256KB)", "Skype (4096KB)", "Teams (4096KB)", "Word (1024KB)" };
         String[] itemsMemoryModel = { "Particiones estaticas fijas", "Particiones estaticas variables", "Particiones dinamicas", "Segmentación", "Paginación" };
         String[] itemsAlgortihm = { "Primer ajuste", "Mejor ajuste", "Peor ajuste" };
@@ -52,14 +53,15 @@ namespace Gerstor_De_Particiones_De_Memoria
             gImagen.FillRectangle(new SolidBrush(Color.GreenYellow), 0, 0, 1024, 200);
             gImagen.DrawRectangle(new Pen(Color.Black), 0, 0, 128, 200);
             gImagen.FillRectangle(new SolidBrush(Color.LightGoldenrodYellow), 0, 0, 128, 200);
-            switch (comboMemoryModel.SelectedIndex)
+            indexPartitionType = comboMemoryModel.SelectedIndex;
+            switch (indexPartitionType)
             {
                 case 0:
                     drawPartitionalFixed();
                     memorySpaces = new List<MemorySpace>();
                     for (int i = 0; i < 7; i++)
                     {
-                        memorySpaces.Add(new MemorySpace());
+                        memorySpaces.Add(new MemorySpace { TotalSpace = 2048});
                     }
                     break;
                 case 1:
@@ -121,12 +123,30 @@ namespace Gerstor_De_Particiones_De_Memoria
             List<string> listProcess = itemsProcessActive.ToList();
             int.TryParse(itemsProcessPending[indexPending].Split('(')[1].Split('K')[0], out int weigth);
             int indexMemory = memorySpaces.FindIndex(x => x.UsedSpace == false);
-            if(indexMemory < 0 || weigth > 2048)
+            int totalSpace = 0;
+            switch (indexPartitionType)
+            {
+                case 0:
+                    totalSpace = 2048;
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+
+            }
+
+            if (indexMemory < 0 || weigth > memorySpaces[indexMemory].TotalSpace)
             {
                 MessageBox.Show("Memoria insuficiente");
                 return;
             }
-            MemorySpace newSpace = new MemorySpace { ProcessName = itemsProcessPending[indexPending], UsedSpace = true };
+
+            MemorySpace newSpace = new MemorySpace { ProcessName = itemsProcessPending[indexPending], UsedSpace = true, TotalSpace = totalSpace };
             memorySpaces[indexMemory] = newSpace;
             drawPartitionalFixedItem(indexMemory + 1, weigth);
             listProcess.Add(itemsProcessPending[indexPending]);
@@ -139,7 +159,7 @@ namespace Gerstor_De_Particiones_De_Memoria
             int indexProcessToFinish = listProcessActive.SelectedIndex;
             if(indexProcessToFinish < 0) { return; }
             int indexMemoryDelete = memorySpaces.FindIndex(x => x.ProcessName == itemsProcessActive[indexProcessToFinish]);
-            memorySpaces[indexMemoryDelete] = new MemorySpace();
+            memorySpaces[indexMemoryDelete] = new MemorySpace { TotalSpace = memorySpaces[indexMemoryDelete].TotalSpace };
             List<string> listProcess = itemsProcessActive.ToList();
             deletePartitionalFixedItem(indexMemoryDelete + 1);
             listProcess.RemoveAt(indexProcessToFinish);
@@ -168,6 +188,7 @@ namespace Gerstor_De_Particiones_De_Memoria
         {
             itemsProcessActive = new List<string>().ToArray();
             listProcessActive.DataSource = itemsProcessActive;
+            memorySpaces = new List<MemorySpace>();
             drawImage();
         }
     }
