@@ -141,8 +141,8 @@ namespace Gerstor_De_Particiones_De_Memoria
             int indexMemoryDelete = memorySpaces.FindIndex(x => x.ProcessName == itemsProcessActive[indexProcessToFinish]);
             memorySpaces[indexMemoryDelete] = new MemorySpace();
             List<string> listProcess = itemsProcessActive.ToList();
+            deletePartitionalFixedItem(indexMemoryDelete + 1);
             listProcess.RemoveAt(indexProcessToFinish);
-            deletePartitionalFixedItem(indexProcessToFinish + 1);
             itemsProcessActive = listProcess.ToArray();
             listProcessActive.DataSource = itemsProcessActive;
         }
