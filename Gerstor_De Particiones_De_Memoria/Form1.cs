@@ -76,8 +76,8 @@ namespace Gerstor_De_Particiones_De_Memoria
             gImagen.DrawRectangle(new Pen(Color.Black), 0, 0, 1025, 200);
             //Volcamos la imagen generada al panel 
             gLienzo.DrawImage(bitmap, new Point(0, 0));
-            gImagen.Dispose();
-            bitmap.Dispose();
+            //gImagen.Dispose();
+            //bitmap.Dispose();
         }
 
         private void drawPartitionalFixed()
@@ -85,7 +85,7 @@ namespace Gerstor_De_Particiones_De_Memoria
             for(int i = 0; i < 7; i++)
             {
                 //gImagen.FillRectangle(new SolidBrush(Color.Red), 128 * i, 0, (128 * i) + 128, 200);
-                gImagen.DrawRectangle(new Pen(Color.Black), 128 * i, 0, (128 * i) + 128, 200);
+                gImagen.DrawRectangle(new Pen(Color.Black), 128 * i, 0, 128, 200);
             }
         }
 
@@ -114,8 +114,11 @@ namespace Gerstor_De_Particiones_De_Memoria
             int indexPending = listPending.SelectedIndex;
             List<string> listProcess = itemsProcessActive.ToList();
             int.TryParse(itemsProcessPending[indexPending].Split('(')[1].Split('K')[0], out int heigth);
+            if (!drawPartitionalFixedItem(listProcess.Count + 1, heigth))
+            {
+                return;
+            }
             listProcess.Add(itemsProcessPending[indexPending]);
-            drawPartitionalFixedItem(listProcess.Count, heigth);
             itemsProcessActive = listProcess.ToArray();
             listProcessActive.DataSource = itemsProcessActive;
         }
@@ -129,24 +132,30 @@ namespace Gerstor_De_Particiones_De_Memoria
             listProcessActive.DataSource = itemsProcessActive;
         }
 
-        private void drawPartitionalFixedItem(int position, int weight)
+        private bool drawPartitionalFixedItem(int position, int weight)
         {
             int weigthPartition = memoryTotalSpace / 8;
-            if(weight > weigthPartition)
+            if (weight > weigthPartition)
             {
-                return;
+                MessageBox.Show("El proceso es más grande que la partición");
+                return false;
             }
             if (position > 7)
             {
-                return;
+                MessageBox.Show("No se cuentan con mas particiones");
+                return false;
             }
-            
+
             int percentPartition = (weight * 128) / weigthPartition;
-            gImagen.FillRectangle(new SolidBrush(Color.OrangeRed), 128 * position, 0, (128 * position) + percentPartition, 200);
+            gImagen.FillRectangle(new SolidBrush(Color.Red), 128 * position, 0, percentPartition, 200);
+            gLienzo.DrawImage(bitmap, new Point(0, 0));
+            return true;
         }
 
         private void buttonDraw_Click(object sender, EventArgs e)
         {
+            itemsProcessActive = new List<string>().ToArray();
+            listProcessActive.DataSource = itemsProcessActive;
             drawImage();
         }
     }
