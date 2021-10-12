@@ -19,6 +19,7 @@ namespace Gerstor_De_Particiones_De_Memoria
         int memoryTotalSpace = 16384;
         int memoryOS = 2048;
         int indexPartitionType = 0;
+        int indexAlgorithmType = 0;
         String[] itemsProcessPending = { "Calculadora (128KB)", "Chrome (8192KB)", "Explorador (512KB)", "NotePad (2048KB)", "Paint (512KB)", "PowerPoint (2048KB)", "Recortes (256KB)", "Skype (4096KB)", "Teams (4096KB)", "Word (1024KB)" };
         String[] itemsMemoryModel = { "Particiones estaticas fijas", "Particiones estaticas variables", "Particiones dinamicas", "Segmentación", "Paginación" };
         String[] itemsAlgortihm = { "Primer ajuste", "Mejor ajuste", "Peor ajuste" };
@@ -44,6 +45,13 @@ namespace Gerstor_De_Particiones_De_Memoria
 
         }
 
+        private void buttonDraw_Click(object sender, EventArgs e)
+        {
+            itemsProcessActive = new List<string>().ToArray();
+            listProcessActive.DataSource = itemsProcessActive;
+            drawImage();
+        }
+
         private void drawImage()
         {
             gLienzo = panelRam.CreateGraphics();
@@ -54,11 +62,12 @@ namespace Gerstor_De_Particiones_De_Memoria
             gImagen.DrawRectangle(new Pen(Color.Black), 0, 0, 128, 200);
             gImagen.FillRectangle(new SolidBrush(Color.LightGoldenrodYellow), 0, 0, 128, 200);
             indexPartitionType = comboMemoryModel.SelectedIndex;
+            indexAlgorithmType = comboAssignAlgortihm.SelectedIndex;
+            memorySpaces = new List<MemorySpace>();
             switch (indexPartitionType)
             {
                 case 0:
                     drawPartitionalFixed();
-                    memorySpaces = new List<MemorySpace>();
                     for (int i = 0; i < 7; i++)
                     {
                         memorySpaces.Add(new MemorySpace { TotalSpace = 2048});
@@ -69,6 +78,7 @@ namespace Gerstor_De_Particiones_De_Memoria
                     break;
                 case 2:
                     drawPartitionalDynamic();
+                    memorySpaces.Add(new MemorySpace { TotalSpace = memoryTotalSpace - memoryOS });
                     break;
                 case 3:
                     drawPartitionalSegment();
@@ -76,10 +86,7 @@ namespace Gerstor_De_Particiones_De_Memoria
                 case 4:
                     drawPartitionalPages();
                     break;
-
             }
-
-
 
             gImagen.DrawRectangle(new Pen(Color.Black), 0, 0, 1025, 200);
             //Volcamos la imagen generada al panel 
@@ -104,7 +111,7 @@ namespace Gerstor_De_Particiones_De_Memoria
 
         private void drawPartitionalDynamic()
         {
-
+            gImagen.DrawRectangle(new Pen(Color.Black), 128, 0, 896, 200);
         }
 
         private void drawPartitionalSegment()
@@ -117,12 +124,48 @@ namespace Gerstor_De_Particiones_De_Memoria
 
         }
 
+        private int indexSelectAdjust(int spaceProcess = 128)
+        {
+            int indexAdjust = 0;
+            switch (indexAlgorithmType)
+            {
+                case 0:
+                    indexAdjust = memorySpaces.FindIndex(x => x.UsedSpace == false);
+                    break;
+                case 1:
+                    int positionOpt = -1;
+                    int weigthOpt = 0;
+                    for(int i = 0; i < memorySpaces.Count; i++)
+                    {
+                        if(memorySpaces[i].UsedSpace == false && memorySpaces[i].TotalSpace > spaceProcess)
+                        {
+                            int differenceSpace = memorySpaces[i].TotalSpace - spaceProcess;
+                            if(weigthOpt < differenceSpace)
+                            {
+                                weigthOpt = differenceSpace;
+                                positionOpt = i;
+                            }
+                        }
+                    }
+                    indexAdjust = positionOpt;
+                    break;
+                case 2:
+                    int maxSpace = memorySpaces.FindAll(x => x.UsedSpace == false).Max(x => x.TotalSpace);
+                    indexAdjust = memorySpaces.FindIndex(x => x.UsedSpace == false && x.TotalSpace == maxSpace);
+                    break;
+                default:
+                    indexAdjust = memorySpaces.FindIndex(x => x.UsedSpace == false);
+                    break;
+            }
+            return indexAdjust;
+        }
+
         private void buttonAddProcess_Click(object sender, EventArgs e)
         {
             int indexPending = listPending.SelectedIndex;
             List<string> listProcess = itemsProcessActive.ToList();
             int.TryParse(itemsProcessPending[indexPending].Split('(')[1].Split('K')[0], out int weigth);
-            int indexMemory = memorySpaces.FindIndex(x => x.UsedSpace == false);
+            int indexMemory = indexSelectAdjust(weigth);
             int totalSpace = 0;
             switch (indexPartitionType)
             {
@@ -137,7 +180,6 @@ namespace Gerstor_De_Particiones_De_Memoria
                     break;
                 case 4:
                     break;
-
             }
 
             if (indexMemory < 0 || weigth > memorySpaces[indexMemory].TotalSpace)
@@ -184,12 +226,21 @@ namespace Gerstor_De_Particiones_De_Memoria
             gLienzo.DrawImage(bitmap, new Point(0, 0));
         }
 
-        private void buttonDraw_Click(object sender, EventArgs e)
+        private void drawPartitionalDynamicItem(int position, int weigth)
         {
-            itemsProcessActive = new List<string>().ToArray();
-            listProcessActive.DataSource = itemsProcessActive;
-            memorySpaces = new List<MemorySpace>();
-            drawImage();
+            int weigthPartition = memoryTotalSpace / 8;
+            int percentPartition = (weigth * 128) / weigthPartition;
+            gImagen.FillRectangle(new SolidBrush(Color.Red), 128 * position, 0, percentPartition, 200);
+            drawPartitionalFixed();
+            gLienzo.DrawImage(bitmap, new Point(0, 0));
+            return;
         }
+
+        private void deletePartitionalDynamicItem(int position)
+        {
+            gImagen.FillRectangle(new SolidBrush(Color.GreenYellow), 128 * position, 0, 128, 200);
+            drawPartitionalFixed();
+            gLienzo.DrawImage(bitmap, new Point(0, 0));
+        } 
     }
 }
