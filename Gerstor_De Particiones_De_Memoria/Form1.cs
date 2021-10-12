@@ -173,6 +173,7 @@ namespace Gerstor_De_Particiones_De_Memoria
                     totalSpace = 2048;
                     break;
                 case 1:
+                    totalSpace = memorySpaces[indexMemory].TotalSpace;
                     break;
                 case 2:
                     break;
@@ -190,7 +191,15 @@ namespace Gerstor_De_Particiones_De_Memoria
 
             MemorySpace newSpace = new MemorySpace { ProcessName = itemsProcessPending[indexPending], UsedSpace = true, TotalSpace = totalSpace };
             memorySpaces[indexMemory] = newSpace;
-            drawPartitionalFixedItem(indexMemory + 1, weigth);
+            switch (comboMemoryModel.SelectedIndex)
+            {
+                case 0:
+                    drawPartitionalFixedItem(indexMemory + 1, weigth);
+                    break;
+                case 2:
+                    drawPartitionalDynamicItem(indexMemory + 1, weigth);
+                    break;
+            }
             listProcess.Add(itemsProcessPending[indexPending]);
             itemsProcessActive = listProcess.ToArray();
             listProcessActive.DataSource = itemsProcessActive;
