@@ -36,17 +36,16 @@ namespace Gerstor_De_Particiones_De_Memoria
         {
             InitializeComponent();
 
-            
-
+            buttonCompact.Visible = false;
             listPending.DataSource = itemsProcessPending;
             comboMemoryModel.DataSource = itemsMemoryModel;
             comboAssignAlgortihm.DataSource = itemsAlgortihm;
             listProcessActive.DataSource = itemsProcessActive;
-
         }
 
         private void buttonDraw_Click(object sender, EventArgs e)
         {
+            buttonCompact.Visible = false;
             itemsProcessActive = new List<string>().ToArray();
             listProcessActive.DataSource = itemsProcessActive;
             drawImage();
@@ -75,8 +74,30 @@ namespace Gerstor_De_Particiones_De_Memoria
                     break;
                 case 1:
                     drawPartitionalVar();
+                    memorySpaces.Add(new MemorySpace { TotalSpace = 4096 });
+                    memorySpaces.Add(new MemorySpace { TotalSpace = 2048 });
+                    for (int i = 0; i <= 1; i++)
+                    {
+                        memorySpaces.Add(new MemorySpace { TotalSpace = 1024 });
+                    }
+
+                    for (int i = 0; i <= 3; i++)
+                    {
+                        memorySpaces.Add(new MemorySpace { TotalSpace = 512 });
+                    }
+
+                    for (int i = 0; i <= 7; i++)
+                    {
+                        memorySpaces.Add(new MemorySpace { TotalSpace = 256 });
+                    }
+
+                    for (int i = 0; i <= 15; i++)
+                    {
+                        memorySpaces.Add(new MemorySpace { TotalSpace = 128 });
+                    }
                     break;
                 case 2:
+                    //buttonCompact.Visible = true;
                     drawPartitionalDynamic();
                     memorySpaces.Add(new MemorySpace { TotalSpace = memoryTotalSpace - memoryOS });
                     break;
@@ -99,14 +120,38 @@ namespace Gerstor_De_Particiones_De_Memoria
         {
             for(int i = 0; i < 7; i++)
             {
-                //gImagen.FillRectangle(new SolidBrush(Color.Red), 128 * i, 0, (128 * i) + 128, 200);
                 gImagen.DrawRectangle(new Pen(Color.Black), 128 * i, 0, 128, 200);
             }
         }
 
         private void drawPartitionalVar()
         {
-
+            gImagen.DrawRectangle(new Pen(Color.Black), 128, 0, 256, 200);
+            gImagen.DrawRectangle(new Pen(Color.Black), 384, 0, 128, 200);
+            int size1 = 512;
+            for (int i = 0; i <= 1; i++)
+            {
+                size1 = size1 + 64;
+                gImagen.DrawRectangle(new Pen(Color.Black), size1, 0, 64, 200);
+            }
+            int size2 = 640;
+            for (int i = 0; i <= 3; i++)
+            {
+                size2 = size2 + 32;
+                gImagen.DrawRectangle(new Pen(Color.Black), size2, 0, 32, 200);
+            }
+            int size3 = 768;
+            for (int i = 0; i <= 7; i++)
+            {
+                size3 = size3 + 16;
+                gImagen.DrawRectangle(new Pen(Color.Black), size3, 0, 16, 200);
+            }
+            int size4 = 896;
+            for (int i = 0; i <= 15; i++)
+            {
+                size4 = size4 + 8;
+                gImagen.DrawRectangle(new Pen(Color.Black), size4, 0, 8, 200);
+            }
         }
 
         private void drawPartitionalDynamic()
@@ -137,7 +182,7 @@ namespace Gerstor_De_Particiones_De_Memoria
                     int weigthOpt = memoryTotalSpace;
                     for(int i = 0; i < memorySpaces.Count; i++)
                     {
-                        if(memorySpaces[i].UsedSpace == false && memorySpaces[i].TotalSpace > spaceProcess)
+                        if(memorySpaces[i].UsedSpace == false && memorySpaces[i].TotalSpace >= spaceProcess)
                         {
                             int differenceSpace = memorySpaces[i].TotalSpace - spaceProcess;
                             if(weigthOpt > differenceSpace)
@@ -203,6 +248,11 @@ namespace Gerstor_De_Particiones_De_Memoria
                     memorySpaces[indexMemory] = newSpace;
                     drawPartitionalFixedItem(indexMemory + 1, weigth);
                     break;
+                case 1:
+                    newSpace = new MemorySpace { ProcessName = itemsProcessPending[indexPending], UsedSpace = true, TotalSpace = totalSpace };
+                    memorySpaces[indexMemory] = newSpace;
+                    drawPartitionalVarItem(indexMemory, weigth); //And
+                    break;
                 case 2:
                     newSpace = new MemorySpace { ProcessName = itemsProcessPending[indexPending], UsedSpace = true, TotalSpace = weigth };
                     memorySpaces[indexMemory] = newSpace;
@@ -228,6 +278,7 @@ namespace Gerstor_De_Particiones_De_Memoria
                     deletePartitionalFixedItem(indexMemoryDelete + 1);
                     break;
                 case 1:
+                    deletePartitionalVarItem(indexMemoryDelete);
                     break;
                 case 2:
                     deletePartitionalDynamicItem(indexMemoryDelete);
@@ -252,6 +303,36 @@ namespace Gerstor_De_Particiones_De_Memoria
         {
             gImagen.FillRectangle(new SolidBrush(Color.GreenYellow), 128 * position, 0, 128, 200);
             drawPartitionalFixed();
+            gLienzo.DrawImage(bitmap, new Point(0, 0));
+        }
+
+        private void drawPartitionalVarItem(int position, int weigth) //And
+        {
+            int weigthPartition = memoryTotalSpace / 8;
+            int percentPartition = (weigth * 128) / weigthPartition;
+            int initPercentPartition = (2048 * 128) / weigthPartition;
+            for (int i = 0; i < position; i++)
+            {
+                initPercentPartition += ((memorySpaces[i].TotalSpace) * 128) / weigthPartition;
+            }
+            gImagen.FillRectangle(new SolidBrush(Color.Red), initPercentPartition, 0, percentPartition, 200);
+            drawPartitionalVar();
+            gLienzo.DrawImage(bitmap, new Point(0, 0));
+            return;
+        }
+
+        private void deletePartitionalVarItem(int position)
+        {
+            int weigthPartition = memoryTotalSpace / 8;
+            int percentPartition = (memorySpaces[position].TotalSpace * 128) / weigthPartition;
+            int initPercentPartition = (2048 * 128) / weigthPartition;
+            for (int i = 0; i < position; i++)
+            {
+                initPercentPartition += ((memorySpaces[i].TotalSpace) * 128) / weigthPartition;
+            }
+            gImagen.FillRectangle(new SolidBrush(Color.GreenYellow), initPercentPartition, 0, percentPartition, 200);
+            //gImagen.FillRectangle(new SolidBrush(Color.GreenYellow), 128 * position, 0, 128, 200);
+            drawPartitionalVar();
             gLienzo.DrawImage(bitmap, new Point(0, 0));
         }
 
@@ -282,6 +363,11 @@ namespace Gerstor_De_Particiones_De_Memoria
             gImagen.FillRectangle(new SolidBrush(Color.GreenYellow), initPercentPartition, 0, percentPartition, 200);
             gImagen.DrawRectangle(new Pen(Color.Black), initPercentPartition, 0, percentPartition, 200);
             gLienzo.DrawImage(bitmap, new Point(0, 0));
-        } 
+        }
+
+        private void buttonCompact_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }

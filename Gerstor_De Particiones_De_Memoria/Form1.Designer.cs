@@ -40,6 +40,7 @@ namespace Gerstor_De_Particiones_De_Memoria
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.panelRam = new System.Windows.Forms.Panel();
             this.buttonDraw = new System.Windows.Forms.Button();
+            this.buttonCompact = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listPending
@@ -141,11 +142,22 @@ namespace Gerstor_De_Particiones_De_Memoria
             this.buttonDraw.UseVisualStyleBackColor = true;
             this.buttonDraw.Click += new System.EventHandler(this.buttonDraw_Click);
             // 
+            // buttonCompact
+            // 
+            this.buttonCompact.Location = new System.Drawing.Point(803, 370);
+            this.buttonCompact.Name = "buttonCompact";
+            this.buttonCompact.Size = new System.Drawing.Size(151, 23);
+            this.buttonCompact.TabIndex = 13;
+            this.buttonCompact.Text = "Compactar";
+            this.buttonCompact.UseVisualStyleBackColor = true;
+            this.buttonCompact.Click += new System.EventHandler(this.buttonCompact_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1436, 626);
+            this.Controls.Add(this.buttonCompact);
             this.Controls.Add(this.buttonDraw);
             this.Controls.Add(this.panelRam);
             this.Controls.Add(this.buttonQuitProcess);
@@ -175,6 +187,7 @@ namespace Gerstor_De_Particiones_De_Memoria
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Panel panelRam;
         private System.Windows.Forms.Button buttonDraw;
+        private System.Windows.Forms.Button buttonCompact;
     }
 }
 
