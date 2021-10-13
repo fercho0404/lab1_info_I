@@ -130,17 +130,17 @@ namespace Gerstor_De_Particiones_De_Memoria
             switch (indexAlgorithmType)
             {
                 case 0:
-                    indexAdjust = memorySpaces.FindIndex(x => x.UsedSpace == false);
+                    indexAdjust = memorySpaces.FindIndex(x => x.UsedSpace == false && x.TotalSpace >= spaceProcess);
                     break;
                 case 1:
                     int positionOpt = -1;
-                    int weigthOpt = 0;
+                    int weigthOpt = memoryTotalSpace;
                     for(int i = 0; i < memorySpaces.Count; i++)
                     {
                         if(memorySpaces[i].UsedSpace == false && memorySpaces[i].TotalSpace > spaceProcess)
                         {
                             int differenceSpace = memorySpaces[i].TotalSpace - spaceProcess;
-                            if(weigthOpt < differenceSpace)
+                            if(weigthOpt > differenceSpace)
                             {
                                 weigthOpt = differenceSpace;
                                 positionOpt = i;
@@ -167,6 +167,11 @@ namespace Gerstor_De_Particiones_De_Memoria
             int.TryParse(itemsProcessPending[indexPending].Split('(')[1].Split('K')[0], out int weigth);
             int indexMemory = indexSelectAdjust(weigth);
             int totalSpace = 0;
+            if (indexMemory < 0)
+            {
+                MessageBox.Show("Memoria insuficiente");
+                return;
+            }
             switch (indexPartitionType)
             {
                 case 0:
@@ -176,6 +181,7 @@ namespace Gerstor_De_Particiones_De_Memoria
                     totalSpace = memorySpaces[indexMemory].TotalSpace;
                     break;
                 case 2:
+                    totalSpace = memorySpaces[indexMemory].TotalSpace;
                     break;
                 case 3:
                     break;
@@ -183,21 +189,26 @@ namespace Gerstor_De_Particiones_De_Memoria
                     break;
             }
 
-            if (indexMemory < 0 || weigth > memorySpaces[indexMemory].TotalSpace)
+            if (weigth > memorySpaces[indexMemory].TotalSpace)
             {
                 MessageBox.Show("Memoria insuficiente");
                 return;
             }
 
-            MemorySpace newSpace = new MemorySpace { ProcessName = itemsProcessPending[indexPending], UsedSpace = true, TotalSpace = totalSpace };
-            memorySpaces[indexMemory] = newSpace;
+            MemorySpace newSpace;
             switch (comboMemoryModel.SelectedIndex)
             {
                 case 0:
+                    newSpace = new MemorySpace { ProcessName = itemsProcessPending[indexPending], UsedSpace = true, TotalSpace = totalSpace };
+                    memorySpaces[indexMemory] = newSpace;
                     drawPartitionalFixedItem(indexMemory + 1, weigth);
                     break;
                 case 2:
-                    drawPartitionalDynamicItem(indexMemory + 1, weigth);
+                    newSpace = new MemorySpace { ProcessName = itemsProcessPending[indexPending], UsedSpace = true, TotalSpace = weigth };
+                    memorySpaces[indexMemory] = newSpace;
+                    drawPartitionalDynamicItem(indexMemory, weigth);
+                    MemorySpace addSpace = new MemorySpace { TotalSpace = totalSpace - weigth };
+                    memorySpaces.Insert(indexMemory + 1, addSpace);
                     break;
             }
             listProcess.Add(itemsProcessPending[indexPending]);
@@ -212,7 +223,16 @@ namespace Gerstor_De_Particiones_De_Memoria
             int indexMemoryDelete = memorySpaces.FindIndex(x => x.ProcessName == itemsProcessActive[indexProcessToFinish]);
             memorySpaces[indexMemoryDelete] = new MemorySpace { TotalSpace = memorySpaces[indexMemoryDelete].TotalSpace };
             List<string> listProcess = itemsProcessActive.ToList();
-            deletePartitionalFixedItem(indexMemoryDelete + 1);
+            switch (comboMemoryModel.SelectedIndex) {
+                case 0:
+                    deletePartitionalFixedItem(indexMemoryDelete + 1);
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    deletePartitionalDynamicItem(indexMemoryDelete);
+                    break;
+            }
             listProcess.RemoveAt(indexProcessToFinish);
             itemsProcessActive = listProcess.ToArray();
             listProcessActive.DataSource = itemsProcessActive;
@@ -239,16 +259,28 @@ namespace Gerstor_De_Particiones_De_Memoria
         {
             int weigthPartition = memoryTotalSpace / 8;
             int percentPartition = (weigth * 128) / weigthPartition;
-            gImagen.FillRectangle(new SolidBrush(Color.Red), 128 * position, 0, percentPartition, 200);
-            drawPartitionalFixed();
+            int initPercentPartition = (2048 * 128) / weigthPartition; 
+            for (int i = 0; i < position; i++)
+            {
+                initPercentPartition += ((memorySpaces[i].TotalSpace) * 128) / weigthPartition;
+            }
+            gImagen.FillRectangle(new SolidBrush(Color.Red), initPercentPartition, 0, percentPartition, 200);
+            gImagen.DrawRectangle(new Pen(Color.Black), initPercentPartition, 0, percentPartition, 200);
             gLienzo.DrawImage(bitmap, new Point(0, 0));
             return;
         }
 
         private void deletePartitionalDynamicItem(int position)
         {
-            gImagen.FillRectangle(new SolidBrush(Color.GreenYellow), 128 * position, 0, 128, 200);
-            drawPartitionalFixed();
+            int weigthPartition = memoryTotalSpace / 8;
+            int percentPartition = (memorySpaces[position].TotalSpace * 128) / weigthPartition;
+            int initPercentPartition = (2048 * 128) / weigthPartition; 
+            for (int i = 0; i < position; i++)
+            {
+                initPercentPartition += ((memorySpaces[i].TotalSpace) * 128) / weigthPartition;
+            }
+            gImagen.FillRectangle(new SolidBrush(Color.GreenYellow), initPercentPartition, 0, percentPartition, 200);
+            gImagen.DrawRectangle(new Pen(Color.Black), initPercentPartition, 0, percentPartition, 200);
             gLienzo.DrawImage(bitmap, new Point(0, 0));
         } 
     }
